@@ -1,31 +1,31 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
 
-const protect = async (req, res, next) => {
-    let token;
-
-    if (
-        req.headers.authorization &&
-        req.headers.authorization.startsWith('Bearer')
-    ) {
-        try {
-            token = req.headers.authorization.split(' ')[1];
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            req.user = await User.findById(decoded.id).select('-password');
-            next();
-        } catch (error) {
-            return res.status(401).json({ message: 'Token failed' });
-        }
-    }
-
+const auth = async (req, res, next) => {
+  try {
+    // Get token from header
+    const token = req.header('Authorization')?.replace('Bearer ', '');
+    
     if (!token) {
-        return res.status(401).json({ message: 'No token' });
+      return res.status(401).json({ 
+        success: false,
+        message: 'No token, authorization denied' 
+      });
     }
+
+    // Verify token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    // Add user ID to request
+    req.user = { userId: decoded.userId };
+    
+    next();
+  } catch (error) {
+    console.error('Auth middleware error:', error);
+    res.status(401).json({ 
+      success: false,
+      message: 'Token is not valid' 
+    });
+  }
 };
 
-const seller = (req, res, next) => {
-    if (req.user && req.user.isSeller) next();
-    else res.status(403).json({ message: 'Seller only' });
-};
-
-module.exports = { protect, seller };
+module.exports = auth;
