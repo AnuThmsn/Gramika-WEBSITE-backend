@@ -15,6 +15,18 @@ const productSchema = new mongoose.Schema(
       type: Number,
       required: true
     },
+    category: {
+      type: String,
+      required: true,
+      enum: [
+        "Vegetables",
+        "Fruits",
+        "Poultry & Meat",
+        "Dairy & Beverages",
+        "Bakery & Snacks",
+        "Homemade Essentials"
+      ]
+    },
     image: {
       type: String, // Base64 image
       required: true

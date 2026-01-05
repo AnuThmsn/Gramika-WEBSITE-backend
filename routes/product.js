@@ -8,9 +8,9 @@ const Product = require("../models/Product");
  */
 router.post("/add", async (req, res) => {
   try {
-    const { name, price, quantity, image } = req.body;
+    const { name, price, quantity, category, image } = req.body;
 
-    if (!name || !price || !quantity || !image) {
+    if (!name || !price || !quantity || !category || !image) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -18,6 +18,7 @@ router.post("/add", async (req, res) => {
       name,
       price,
       quantity,
+      category,
       image
     });
 
@@ -42,6 +43,28 @@ router.get("/", async (req, res) => {
     const products = await Product.find().sort({ createdAt: -1 });
     res.json(products);
   } catch (error) {
+    console.error("Get Products Error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+/**
+ * @route   DELETE /api/products/:id
+ * @desc    Delete product by ID
+ */
+router.delete("/:id", async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    await Product.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({ message: "Product deleted successfully" });
+  } catch (error) {
+    console.error("Delete Product Error:", error);
     res.status(500).json({ message: "Server error" });
   }
 });
