@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true, limit: "30mb" }));
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/user', require('./routes/user'));
 app.use('/api/products', require('./routes/product'));
-app.use('/api/shop', require('./routes/shop'));
+
 
 app.get('/', (req, res) => {
   res.send('Gramika API Running');
