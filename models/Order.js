@@ -1,16 +1,19 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const orderItemSchema = new mongoose.Schema({
-  productId: {
+  product: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Product",
     required: true,
   },
-  name: { type: String, required: true },
-  price: { type: Number, required: true },
-  quantity: { type: Number, required: true },
-  image: { type: String },
-  seller: { type: String },
+  name: String,
+  price: Number,
+  quantity: {
+    type: Number,
+    required: true,
+  },
+  image: String,
+  seller: String,
 });
 
 const orderSchema = new mongoose.Schema(
@@ -26,18 +29,11 @@ const orderSchema = new mongoose.Schema(
       required: true,
     },
 
-    billingDetails: {
-      name: { type: String, required: true },
-      email: { type: String },
-      phone: { type: String },
-      address: { type: String, required: true },
-      pincode: { type: String },
-    },
-
-    paymentMethod: {
-      type: String,
-      enum: ["card", "upi", "cod"],
-      required: true,
+    shippingAddress: {
+      name: String,
+      mobile: String,
+      address: String,
+      pincode: String,
     },
 
     totalAmount: {
@@ -45,13 +41,18 @@ const orderSchema = new mongoose.Schema(
       required: true,
     },
 
+    paymentMethod: {
+      type: String,
+      enum: ["COD", "ONLINE"],
+      required: true,
+    },
+
     status: {
       type: String,
-      enum: ["Pending", "Completed", "Cancelled"],
       default: "Pending",
     },
   },
   { timestamps: true }
 );
 
-export default mongoose.model("Order", orderSchema);
+module.exports = mongoose.model("Order", orderSchema);
